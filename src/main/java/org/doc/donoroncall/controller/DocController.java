@@ -32,7 +32,6 @@ public class DocController {
 	
 	@RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody <T> String listDonors(){
-		System.out.println("Donor List .............");
 		Gson gson = new Gson();
 		List<DocDonorInfo> donorsList = docHandler.getAllDonors();
 		Map<String, T> resMap = new HashMap<String, T>();
@@ -64,8 +63,8 @@ public class DocController {
 	@RequestMapping(value = "/selectDonor", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody String selectDonor(@RequestBody String donorInfo){
 		Gson gson = new Gson();
-		DocDonorInfo docDonorInfo = gson.fromJson(donorInfo, DocDonorInfo.class);
-		String resString = docHandler.selectDonors(docDonorInfo);
+		BloodDonationInfo bloodDonationInfo = gson.fromJson(donorInfo, BloodDonationInfo.class);
+		String resString = docHandler.selectDonors(bloodDonationInfo);
 		Map<String, String> resMap = new HashMap<String, String>();
 		if(resString.equalsIgnoreCase("success")){
 			resMap.put("status", "success");
@@ -80,8 +79,8 @@ public class DocController {
 	@RequestMapping(value = "/pendingRequests", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody <T> String getPendingRequests(@RequestBody String userName){
 		Gson gson = new Gson();
-		BloodDonationInfo docDonorInfo = gson.fromJson(userName, BloodDonationInfo.class);
-		List<BloodDonationInfo> pendingRequestList = docHandler.getPendingRequest("name");
+		DocDonorInfo docDonorInfo = gson.fromJson(userName, DocDonorInfo.class);
+		List<BloodDonationInfo> pendingRequestList = docHandler.getPendingRequest(docDonorInfo.getUserName());
 		Map<String, T> resMap = new HashMap<String, T>();
 		if(!pendingRequestList.isEmpty()){
 			resMap.put("status", (T) "success");

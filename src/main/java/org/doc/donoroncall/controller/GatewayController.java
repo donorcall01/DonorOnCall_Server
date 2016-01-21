@@ -41,25 +41,24 @@ public class GatewayController {
 
 	@RequestMapping(value = "doc/gateWay", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody
-	String getOAuth(@RequestBody String inputAsJson) {
+	<T> String getOAuth(@RequestBody String inputAsJson) {
 		logger.info(clz + "getOAuth GET start.");
 		Gson gson=new Gson();
 		LoginInfo loginInfo = gson.fromJson(inputAsJson, LoginInfo.class);
-		String resString = loginHand.loginAuthenticate(loginInfo);
-		Map<String, String> obj = new HashMap<String,String>();
-		String res[] = resString.split("#");
-		if(res[0].equalsIgnoreCase("success")){		
-			obj.put("success", "true");
-			obj.put("type", res[1]);
-			String uuid = UUID.randomUUID().toString()+loginInfo.getPassword();
+		RegistrationInfo regInfo = loginHand.loginAuthenticate(loginInfo);
+		Map<String, T> obj = new HashMap<String,T>();
+		if(regInfo!=null){		
+			obj.put("success", (T) "true");			
+			/*String uuid = UUID.randomUUID().toString()+loginInfo.getPassword();
 			byte [] tokenByte = new Base64(true).encodeBase64(uuid.getBytes());
 			String token = new String(tokenByte);
-			obj.put("accessToken", token);		
-			logger.info(clz + "getOAuth GET end."+loginInfo.getUserName()+"    "+resString);		
+			obj.put("accessToken", token);*/
+			obj.put("user", (T) regInfo);
+			logger.info(clz + "getOAuth GET end."+loginInfo.getUserName());		
 		}else{
-			obj.put("success", "false");
-			obj.put("accessToken", "null");		
-			logger.info(clz + "getOAuth GET end."+loginInfo.getUserName()+"    "+resString);
+			obj.put("success", (T)"false");
+			obj.put("user", (T)"null");		
+			logger.info(clz + "getOAuth GET end."+loginInfo.getUserName());
 		}
 		return gson.toJson(obj);
 	}

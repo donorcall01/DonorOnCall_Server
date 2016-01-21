@@ -40,7 +40,6 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 				donorsList.add(dInfo);					
 			} 
 		}catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return donorsList;
@@ -52,12 +51,12 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 		List<DocDonorInfo> donorsList = new ArrayList<DocDonorInfo>();
 		String query = "select * from doc.donor where location = ? AND blood_group = ?";
 		Connection con = getConnection();		 
-		ResultSet rs = getResult(query);
+		ResultSet rs;
 		try {
 			PreparedStatement st = con.prepareStatement(query);
 			st.setString(1, dDInfo.getLocation());
-			st.setString(2, dDInfo.getLocation());
-			getResult(st);
+			st.setString(2, dDInfo.getBloodGroup());
+			rs = getResult(st);
 			while(rs.next()){			
 				dInfo = new DocDonorInfo();
 				dInfo.setUserName(rs.getString("user_name"));
@@ -67,25 +66,23 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 				donorsList.add(dInfo);					
 			} 
 		}catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return donorsList;
 	}
 
 	@Override
-	public String selectDonor(DocDonorInfo dInfo) {
-		System.out.println("Blood Don ------>"+ dInfo.getUserName());
-		System.out.println("Blood Don ------>"+ dInfo.getLocation());
+	public String selectDonor(BloodDonationInfo bloodDonationInfo) {
 		Connection con = getConnection();
-		String requesterQuery = "select * from doc.requester where username= ?";
+		String requesterQuery = "select * from doc.requester where user_name= ?";
 		DocRequesterInfo drInfo = new DocRequesterInfo();
 		try {
 			PreparedStatement st = con.prepareStatement(requesterQuery);
-			st.setString(1, dInfo.getUserName());
+			st.setString(1, bloodDonationInfo.getRequester());
 	    	ResultSet rs = getResult(st);
 	    	if(rs!=null){	    		
 				while(rs.next()){
+					drInfo.setUserName(rs.getString("user_name"));
 					drInfo.setHospitalName(rs.getString("hospital_name"));
 					drInfo.setBloodGroup(rs.getString("blood_group"));
 					drInfo.setPhysicianName(rs.getString("physician_name"));
@@ -94,19 +91,21 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 				}
 	    	}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return "fail";
 		}
 		String query = "insert into doc.boold_donation (`recipient`,`donor`,`hospital_name`,`physician_name`,`patient`,`unit`,`blood_group`,`accepted`,`verified`) VALUES (?,?,?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setString(1, drInfo.getUserName());
-			ps.setString(2, dInfo.getUserName());
+			ps.setString(2, bloodDonationInfo.getDonor());
 			ps.setString(3, drInfo.getHospitalName());
 			ps.setString(4, drInfo.getPhysicianName());
 			ps.setString(5, drInfo.getPatient());
 			ps.setInt(6, drInfo.getUnit());
 			ps.setString(7, drInfo.getBloodGroup());
+			ps.setString(8, "no");
+			ps.setString(9, "no");
 			int val = executeUpdate(ps);
 			if(val>0){
 				return "success";
@@ -114,11 +113,9 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 				return "false";
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return "fail";
 		}
-    	
-		return null;
 	}
 
 	@Override
@@ -131,7 +128,7 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setString(1, "no");
 			ps.setString(2, userName);
-			ResultSet rs = getResult(query);
+			ResultSet rs = getResult(ps);
 			while(rs.next()){			
 				brInfo = new BloodDonationInfo();
 				brInfo.setDonor(rs.getString("donor"));
@@ -144,7 +141,6 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 				pendingList.add(brInfo);					
 			} 
 		}catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return pendingList;
@@ -152,7 +148,7 @@ public class DocDAOService extends ConnectionProvider implements DocDAOHandler{
 
 	@Override
 	public String acceptBloodRequest(String userName) {
-		String query = "update doc.boold_donation set accepted='yes' where username= ?";
+		String query = "update doc.boold_donation set accepted='yes' where recipient= ?";
 		Connection con = getConnection();
 		try {
 				PreparedStatement st = con.prepareStatement(query);

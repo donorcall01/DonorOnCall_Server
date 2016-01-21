@@ -13,5 +13,4 @@ import org.doc.donoroncall.doc.info.DocRequesterInfo;
 public interface DocRequestDAOHandler {
 	public String donorRequestDao(DocRequesterInfo brInfo);
 	public String docDonorRequestDao(DocDonorInfo ddInfo);
-	public String getPendingRequest();
 }
