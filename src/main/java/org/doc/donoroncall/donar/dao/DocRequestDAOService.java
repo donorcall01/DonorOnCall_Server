@@ -58,13 +58,6 @@ public class DocRequestDAOService extends ConnectionProvider implements DocReque
 		    return "fail";
 		  }
 	}
-
-	@Override
-	public String getPendingRequest() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public String docDonorRequestDao(DocDonorInfo ddInfo) {
 		int retval=0;

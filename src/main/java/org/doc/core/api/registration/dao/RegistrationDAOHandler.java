@@ -13,6 +13,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface RegistrationDAOHandler {
-	public String loginAuthenticationDAO(LoginInfo logInfo);
+	public RegistrationInfo loginAuthenticationDAO(LoginInfo logInfo);
 	public String registrationAccountDAO(RegistrationInfo regInfo);
 }

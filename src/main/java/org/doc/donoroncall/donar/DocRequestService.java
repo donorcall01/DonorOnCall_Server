@@ -33,7 +33,7 @@ public class DocRequestService implements DocRequestHandler {
 	public String docRequest(DocRequesterInfo drInfo) {
 		String regRes = drDAOHandler.donorRequestDao(drInfo);
 		if(regRes.equalsIgnoreCase("success")){
-			dmi.sendMail(drInfo.getUserName(), "Blood request", "Hi, Please accept my blood request");			
+			//dmi.sendMail(drInfo.getUserName(), "Blood request", "Hi, Please accept my blood request");			
 		}
 		return regRes;
 	}

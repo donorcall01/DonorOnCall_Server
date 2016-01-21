@@ -92,7 +92,7 @@ public class AdminDAOService extends ConnectionProvider implements AdminDAOHandl
 
 	@Override
 	public String acceptRequest(String userName) {
-		String query = "update doc.request set verified='yes' where user_name= ?";
+		String query = "update doc.requester set verified='yes' where user_name= ?";
 		Connection con = getConnection();
 		try {
 			PreparedStatement st = con.prepareStatement(query);

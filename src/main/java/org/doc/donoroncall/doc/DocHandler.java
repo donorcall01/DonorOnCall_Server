@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public interface DocHandler {
 	public List<DocDonorInfo> getAllDonors();
 	public List<DocDonorInfo> getDonorsForRecipient(DocDonorInfo dInfo);
-	public String selectDonors(DocDonorInfo dInfo);
+	public String selectDonors(BloodDonationInfo bloodDonationInfo);
 	public List<BloodDonationInfo> getPendingRequest(String userName);
 	public String acceptBloodRequest(String userName);
 }

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import org.doc.core.api.registration.info.LoginInfo;
 import org.doc.core.api.registration.info.RegistrationInfo;
 import org.doc.core.util.db.ConnectionProvider;
+import org.doc.donoroncall.doc.info.DocRequesterInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,30 +31,26 @@ public class RegistrationDAOService extends ConnectionProvider implements Regist
 	 * loginAuthenticationDAO(org.doc.core.api.registration.info.LoginInfo)
 	 */
 	private final Logger logger = LoggerFactory.getLogger(RegistrationDAOService.class);	
-	public String loginAuthenticationDAO(LoginInfo logInfo) {
+	public RegistrationInfo loginAuthenticationDAO(LoginInfo logInfo) {
 		String query = "select * from doc.login_auth where username='"+logInfo.getUserName()+"'";
 		ResultSet rs = getResult(query);
 		String dbUser = "";
 		String dbPass = "";
-		String userType = "";
 		try {
 			 while (rs.next()){
 				dbUser = rs.getString("username");
 				dbPass = rs.getString("password");
-				userType = rs.getString("type");
 			 }
-			System.out.println("USER NAME ---------> "+dbUser);
-			System.out.println("USER NAME ---------> "+dbPass);
 			logger.debug(RegistrationDAOService.class+"   USER NSME   "+dbUser);
 			logger.debug(RegistrationDAOService.class+"  PASSWORD "+dbPass);
-			if(dbUser == logInfo.getUserName() && dbPass.equals(logInfo.getPassword())){
-				return "success#"+userType;
+			if((dbUser.equals(logInfo.getUserName())) && (dbPass.equals(logInfo.getPassword()))){
+				return getUserObject(dbUser);
 			}else{
-				return "fail";
+				return null;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return "fail";
+			return null;
 		}
 	}
 
@@ -93,5 +90,29 @@ public class RegistrationDAOService extends ConnectionProvider implements Regist
 		    return "fail";
 		  }
 	}
-
+	private RegistrationInfo getUserObject(String userName){
+		Connection con = getConnection();
+		String requesterQuery = "select * from doc.user where `username` = ?";
+		RegistrationInfo regInfo = new RegistrationInfo();
+		try {
+			PreparedStatement st = con.prepareStatement(requesterQuery);
+			st.setString(1, userName);
+	    	ResultSet rs1 = getResult(st);
+	    	if(rs1!=null){	    		
+				while(rs1.next()){
+					regInfo.setUserName(rs1.getString("username"));
+					regInfo.setPassWord(rs1.getString("password"));
+					regInfo.setBloodGroup(rs1.getString("blood_group"));
+					regInfo.setType(rs1.getString("type"));
+					regInfo.setDob(rs1.getString("dob"));
+				}
+				return regInfo;
+	    	}else{
+	    		return null;
+	    	}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
