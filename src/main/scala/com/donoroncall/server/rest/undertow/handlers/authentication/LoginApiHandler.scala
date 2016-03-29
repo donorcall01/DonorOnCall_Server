@@ -25,7 +25,7 @@ class LoginApiHandler @Inject()(authenticationController: AuthenticationControll
 
         val requestJson = request.parseJson.asJsObject
 
-        val userName = requestJson.getFields("userName").head.asInstanceOf[JsString].value
+        val userName = requestJson.getFields("username").head.asInstanceOf[JsString].value
         val password = requestJson.getFields("password").head.asInstanceOf[JsString].value
 
         val authToken = authenticationController.login(userName, password)

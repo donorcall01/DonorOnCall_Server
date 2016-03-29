@@ -20,16 +20,20 @@ WIP Code Changes required for the below to work
 ```
 CREATE TABLE users
   (
-     userid             BIGINT NOT NULL auto_increment,
+     userId             BIGINT NOT NULL auto_increment,
      username           VARCHAR(255) NOT NULL UNIQUE,
      password_hash      VARCHAR(128),
      email              VARCHAR(255) UNIQUE,
+     phoneNo            VARCHAR(20),
+     dob                VARCHAR(20),
      address_1          VARCHAR(255),
      address_2          VARCHAR(255),
      locality           VARCHAR(255),
      city               VARCHAR(255),
      blood_group        VARCHAR(20),
      account_status     VARCHAR(20),
+     latitude           VARCHAR(25),
+     longitude          VARCHAR(25),
      health_information VARCHAR(1024),
      is_donor           BOOLEAN NOT NULL DEFAULT 0,
      is_recipient       BOOLEAN NOT NULL DEFAULT 0,
@@ -38,6 +42,34 @@ CREATE TABLE users
      request_count      INT DEFAULT 0,
      fulfilled_count    INT DEFAULT 0,
      donation_count     INT DEFAULT 0,
-     PRIMARY KEY (userid)
+     PRIMARY KEY (userId)
   );
+
+  CREATE TABLE recipients (
+  userId                BIGINT NOT NULL auto_increment,
+  blood_group           VARCHAR(20),
+  username              VARCHAR(255) NOT NULL UNIQUE,
+  hospital_name         VARCHAR(255),
+  patient_name          VARCHAR(255),
+  purpose               VARCHAR(255),
+  request_count         INT DEFAULT 0,
+  how_soon              INT DEFAULT 0,
+  phoneNo               VARCHAR(20),
+  latitude              VARCHAR(255),
+  longitude             VARCHAR(255),
+  PRIMARY KEY (userId)
+  );
+
+CREATE TABLE process_complete (
+  userId                BIGINT NOT NULL auto_increment,
+  blood_group           VARCHAR(20),
+  username              VARCHAR(255) NOT NULL UNIQUE,
+  donationStatus        VARCHAR(20),
+  donorUserName         VARCHAR(255),
+  units                 INT DEFAULT 0,
+  date                  VARCHAR(20),
+  PRIMARY KEY (userId)
+);
+
+
 ```
