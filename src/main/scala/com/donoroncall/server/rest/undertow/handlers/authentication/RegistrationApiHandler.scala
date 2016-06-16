@@ -2,6 +2,7 @@ package com.donoroncall.server.rest.undertow.handlers.authentication
 
 import com.donoroncall.server.models.User
 import com.donoroncall.server.rest.controllers.authentication.AuthenticationController
+import com.donoroncall.server.utils.STATUS_CODES
 import com.google.inject.Inject
 import io.undertow.server.{HttpHandler, HttpServerExchange}
 import org.apache.commons.io.IOUtils
@@ -31,7 +32,7 @@ class RegistrationApiHandler @Inject()(authenticationController: AuthenticationC
           ).prettyPrint)
         } else {
           //TODO add logic for Failed Registration
-          exchange.setStatusCode(400)
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Registration Failed"),
@@ -42,7 +43,7 @@ class RegistrationApiHandler @Inject()(authenticationController: AuthenticationC
 
       } catch {
         case e: Exception => {
-          exchange.setStatusCode(400)
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Registration Failed")

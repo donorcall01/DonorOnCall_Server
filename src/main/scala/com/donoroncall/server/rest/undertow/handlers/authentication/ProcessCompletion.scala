@@ -1,6 +1,7 @@
 package com.donoroncall.server.rest.undertow.handlers.authentication
 
 import com.donoroncall.server.rest.controllers.authentication.AuthenticationController
+import com.donoroncall.server.utils.STATUS_CODES
 import com.google.inject.Inject
 import io.undertow.server.{HttpHandler, HttpServerExchange}
 import org.apache.commons.io.IOUtils
@@ -38,6 +39,7 @@ class ProcessCompletion @Inject()(authenticationController: AuthenticationContro
 
         } else {
           //TODO add logic for Failed Registration
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Process Completion Failed")
@@ -47,6 +49,7 @@ class ProcessCompletion @Inject()(authenticationController: AuthenticationContro
 
       } catch {
         case e: Exception => {
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Process Completion Failed")

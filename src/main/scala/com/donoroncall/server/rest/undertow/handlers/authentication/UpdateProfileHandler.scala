@@ -1,5 +1,6 @@
 package com.donoroncall.server.rest.undertow.handlers.authentication
 import com.donoroncall.server.rest.controllers.authentication.EditProfileController
+import com.donoroncall.server.utils.STATUS_CODES
 import com.google.inject.Inject
 import io.undertow.server.{HttpHandler, HttpServerExchange}
 import org.apache.commons.io.IOUtils
@@ -40,6 +41,7 @@ class UpdateProfileHandler @Inject()(editProfileController:EditProfileController
 
         } else {
           //TODO add logic for Failed Registration
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Could Not update Profile")
@@ -49,6 +51,7 @@ class UpdateProfileHandler @Inject()(editProfileController:EditProfileController
 
       } catch {
         case e: Exception => {
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Could Not update Profile/Server Error")

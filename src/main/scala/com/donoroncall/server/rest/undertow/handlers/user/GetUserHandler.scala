@@ -1,6 +1,7 @@
 package com.donoroncall.server.rest.undertow.handlers.user
 
 import com.donoroncall.server.rest.controllers.authentication.session.SessionHandler
+import com.donoroncall.server.utils.STATUS_CODES
 import com.google.inject.Inject
 import io.undertow.server.{HttpServerExchange, HttpHandler}
 import org.apache.commons.io.IOUtils
@@ -36,6 +37,7 @@ class GetUserHandler @Inject()(sessionHandler: SessionHandler) extends HttpHandl
           ).prettyPrint)
         } else {
           // If the token is invalid prepare and response
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("auth Failed")
@@ -45,6 +47,7 @@ class GetUserHandler @Inject()(sessionHandler: SessionHandler) extends HttpHandl
 
       } catch {
         case e: Exception =>
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Server Exception")

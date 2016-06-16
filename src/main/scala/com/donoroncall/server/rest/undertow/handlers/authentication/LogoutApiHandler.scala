@@ -2,6 +2,7 @@ package com.donoroncall.server.rest.undertow.handlers.authentication
 
 import com.donoroncall.server.rest.controllers.authentication.AuthenticationController
 import com.donoroncall.server.rest.controllers.authentication.session.SessionHandler
+import com.donoroncall.server.utils.STATUS_CODES
 import com.google.inject.Inject
 import io.undertow.server.{HttpHandler, HttpServerExchange}
 import io.undertow.util.HttpString
@@ -38,6 +39,7 @@ class LogoutApiHandler @Inject()(authenticationController: AuthenticationControl
 
       } catch {
         case e: Exception =>
+          exchange.setStatusCode(STATUS_CODES.SERVER_ERROR)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Server Exception")

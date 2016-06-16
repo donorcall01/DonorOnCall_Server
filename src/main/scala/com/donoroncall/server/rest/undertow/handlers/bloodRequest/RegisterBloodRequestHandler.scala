@@ -2,6 +2,7 @@ package com.donoroncall.server.rest.undertow.handlers.bloodRequest
 
 import com.donoroncall.server.models.{User, BloodRequest}
 import com.donoroncall.server.rest.controllers.authentication.session.SessionHandler
+import com.donoroncall.server.utils.STATUS_CODES
 import com.google.inject.Inject
 import io.undertow.server.{HttpServerExchange, HttpHandler}
 import org.apache.commons.io.IOUtils
@@ -87,6 +88,7 @@ class RegisterBloodRequestHandler @Inject()(sessionHandler: SessionHandler) exte
               "messages" -> JsArray(messages.map(JsString(_)).toVector)
             ).prettyPrint)
           } else {
+            exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
             exchange.getResponseSender.send(JsObject(
               "status" -> JsString("failed"),
               "messages" -> JsArray(messages.map(JsString(_)).toVector)
@@ -95,6 +97,7 @@ class RegisterBloodRequestHandler @Inject()(sessionHandler: SessionHandler) exte
 
         } else {
           // If the token is invalid prepare and response
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("auth Failed")
@@ -104,6 +107,7 @@ class RegisterBloodRequestHandler @Inject()(sessionHandler: SessionHandler) exte
 
       } catch {
         case e: Exception =>
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Server Exception")

@@ -1,6 +1,7 @@
 package com.donoroncall.server.rest.undertow.handlers.authentication
 
 import com.donoroncall.server.rest.controllers.authentication.AuthenticationController
+import com.donoroncall.server.utils.STATUS_CODES
 import com.google.inject.Inject
 import io.undertow.server.{HttpHandler, HttpServerExchange}
 import io.undertow.util.HttpString
@@ -38,7 +39,7 @@ class LoginApiHandler @Inject()(authenticationController: AuthenticationControll
 
         } else {
           //TODO add logic for Login failure
-          exchange.setStatusCode(401)
+          exchange.setStatusCode(STATUS_CODES.UNAUTHORIZED)
           exchange.getResponseSender.send(JsObject(
             "error" -> JsString("Wrong username and password combination")
           ).prettyPrint)
@@ -46,7 +47,7 @@ class LoginApiHandler @Inject()(authenticationController: AuthenticationControll
       } catch {
         case u: UnsupportedOperationException => {
           u.printStackTrace()
-          exchange.setStatusCode(400)
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Invalid Request Format")
@@ -54,7 +55,7 @@ class LoginApiHandler @Inject()(authenticationController: AuthenticationControll
         }
         case e: Exception => {
           e.printStackTrace()
-          exchange.setStatusCode(400)
+          exchange.setStatusCode(STATUS_CODES.BAD_REQUEST)
           exchange.getResponseSender.send(JsObject(
             "status" -> JsString("failed"),
             "message" -> JsString("Server Exception")
